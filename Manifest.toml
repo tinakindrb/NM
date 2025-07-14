@@ -1,0 +1,10 @@
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.11.1"
+manifest_format = "2.0"
+project_hash = "3968b40abfedc2dae0dbefabe80ffbd984e8748e"
+
+[[deps.Naloga1]]
+path = "Naloga1"
+uuid = "b613db03-a897-4b30-a36c-7a603ee40905"
+version = "0.1.0"
