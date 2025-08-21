@@ -1,4 +1,10 @@
 name = "Naloga1"
-uuid = "b613db03-a897-4b30-a36c-7a603ee40905"
+uuid = "088106b6-b138-4bbd-aebf-05a0298c0f7f"
 authors = ["tinakindrb "]
 version = "0.1.0"
+
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+
+[compat]
+LinearAlgebra = "1.11.0"

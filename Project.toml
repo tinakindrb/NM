@@ -1,2 +1,4 @@
 [deps]
-Naloga1 = "b613db03-a897-4b30-a36c-7a603ee40905"
+Naloga1 = "088106b6-b138-4bbd-aebf-05a0298c0f7f"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
