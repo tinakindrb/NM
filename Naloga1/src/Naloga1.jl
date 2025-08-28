@@ -2,95 +2,84 @@ module Naloga1
 
 using LinearAlgebra
 
-export SpTridiag, ZgornjiHessenberg
-
-struct SpTridiag
-    d   # glavna diagonala (dolžine n)
-    sd  # poddiagonala (dolžine n-1)
-end
-
-import Base: \
+export ZgornjiHessenberg, hessenberg
 
 """
-L \\ b
-Reši sistem Lx = b, kjer je L spodnja tridiagonalna matrika tipa SpTridiag.
-"""
-function \(L::SpTridiag, b::Vector)
-    n = length(L.d)
-    if length(b) != n
-        throw(DimensionMismatch("Dimenzija vektorja b se ne ujema z matriko L"))
-    end
-    x = similar(b)
-    x[1] = b[1] / L.d[1]
-    for i = 2:n
-        x[i] = (b[i] - L.sd[i-1]*x[i-1]) / L.d[i]
-    end
-    return x
-end
+ZgornjiHessenberg(H)
 
+Podatkovni tip za zgornje Hessenbergove matrike. Shranjuje kvadratno matriko H,
+ki ima lahko neničelne elemente na glavni diagonali, na prvi poddiagonali in
+na vseh naddiagonalnih mestih. Vsi elementi pod prvo poddiagonalo morajo biti 0.
+"""
 struct ZgornjiHessenberg
-    H   # kvadratna zgornja Hessenbergova matrika
-end
+    H::Matrix{Float64}
 
-"""
-lu(Hh::ZgornjiHessenberg)
-
-Izvede LU razcep zgornje Hessenbergove matrike H brez pivotiranja.
-Vrne (L::SpTridiag, U::Matrix).
-"""
-function lu(Hh::ZgornjiHessenberg)
-    H = Hh.H
-    n = size(H, 1)
-
-    Lsd = zeros(eltype(H), n-1)
-    U = zeros(eltype(H), n, n)
-
-    # prva vrstica U
-    U[1, :] .= H[1, :]
-
-    for i = 1:n-1
-        # multiplikator
-        Lsd[i] = H[i+1, i] / U[i, i]
-
-        # vrstica i+1 v U od stolpca i+1 dalje
-        for j = i+1:n
-            U[i+1, j] = H[i+1, j] - Lsd[i] * U[i, j]
+    function ZgornjiHessenberg(H::AbstractMatrix)
+        n, m = size(H)
+        if n != m
+            error("Matrika mora biti kvadratna.")
         end
+        # preverimo Hessenberg lastnost: ničle pod drugo poddiagonalo
+        for i = 3:n
+            for j = 1:(i-2)
+                if abs(H[i, j]) > 1e-12
+                    error("Matrika ni zgornja Hessenbergova (element H[$i,$j] ≠ 0).")
+                end
+            end
+        end
+        new(Matrix{Float64}(H))
     end
-
-    L = SpTridiag(ones(eltype(H), n), Lsd)
-    return L, U
 end
 
-function hessenberg(A::Matrix)
-    n = size(A, 1)
-    Q = Matrix{eltype(A)}(I, n, n)
-    H = copy(A)
+Base.show(io::IO, Z::ZgornjiHessenberg) = print(io, "ZgornjiHessenberg:\n", Z.H)
+
+"""
+hessenberg(A)
+
+Pretvori kvadratno matriko A v zgornjo Hessenbergovo obliko s pomočjo
+Householderjevih zrcaljenj.
+
+Rezultat je matrika H tipa ZgornjiHessenberg in ortogonalna matrika Q,
+tako da velja: H = Q'*A*Q
+
+# Vhod:
+- A : kvadratna matrika
+
+# Izhod:
+- H : ZgornjiHessenberg (zgornja Hessenbergova matrika)
+- Q : ortogonalna matrika
+"""
+
+function hessenberg(A::AbstractMatrix)
+    n, m = size(A)
+
+    H = Matrix{Float64}(A) # kopija A
+    Q = Matrix{Float64}(I, n, n)
 
     for k = 1:n-2
+        # vektor pod diagonalo v stolpcu k
         x = H[k+1:n, k]
 
-        # če je stolpec že v Hessenberg obliki, preskoči
-        if norm(x[2:end]) < 1e-14
-            continue
-        end
-
-        e = zeros(eltype(A), length(x))
+        # Householderjev vektor
+        e = zeros(length(x))
         e[1] = norm(x)
-
         if norm(x) == 0
-            u = zeros(eltype(A), length(x))
+            v = zeros(size(x))
         else
-            u = sign(x[1]) * e + x
-            u /= norm(u)
+            v = sign(x[1]) * e + x
+            v /= norm(v)
         end
 
-        P = Matrix{eltype(A)}(I, n-k, n-k) - 2 * (u * u')
+        # refleksija
+        P = Matrix{Float64}(I, length(v), length(v)) - 2 * (v * v')
 
+        # posodobimo H in Q (uporabimo P na pravem podbloku)
         H[k+1:n, k:n] = P * H[k+1:n, k:n]
         H[1:n, k+1:n] = H[1:n, k+1:n] * P
         Q[k+1:n, :]   = P * Q[k+1:n, :]
     end
+
+    #print(H)
 
     return ZgornjiHessenberg(H), Q'
 end

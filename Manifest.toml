@@ -2,7 +2,7 @@
 
 julia_version = "1.11.1"
 manifest_format = "2.0"
-project_hash = "1fde0fcc4fd5561d68a30a3b99d08dd88579b3fc"
+project_hash = "ee0554555e30a39469bd5df19a727672af1abbdd"
 
 [[deps.AliasTables]]
 deps = ["PtrArrays", "Random"]
@@ -94,6 +94,17 @@ version = "2.5.0"
 git-tree-sha1 = "439e35b0b36e2e5881738abc8857bd92ad6ff9a8"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
 version = "0.6.3"
+
+[[deps.Coverage]]
+deps = ["CoverageTools", "HTTP", "JSON", "LibGit2", "MbedTLS"]
+git-tree-sha1 = "8bec778f726847baa5a9bb61a4060edf675e59d8"
+uuid = "a2441757-f6aa-5fb2-8edb-039e3f45d037"
+version = "1.6.1"
+
+[[deps.CoverageTools]]
+git-tree-sha1 = "72ded72062bedff105dc69dfc0cb07d2197c1669"
+uuid = "c36e975a-824b-4404-a568-ef97ca766997"
+version = "1.3.2"
 
 [[deps.DataAPI]]
 git-tree-sha1 = "abe83f3a2f1b857aac70ef8b269080af17764bbe"
@@ -473,6 +484,7 @@ uuid = "77ba4419-2d1f-58cd-9bb1-8ffee604a2e3"
 version = "1.1.3"
 
 [[deps.Naloga1]]
+deps = ["LinearAlgebra"]
 path = "Naloga1"
 uuid = "088106b6-b138-4bbd-aebf-05a0298c0f7f"
 version = "0.1.0"
