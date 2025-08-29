@@ -2,7 +2,7 @@ module Naloga1
 
 using LinearAlgebra
 
-export ZgornjiHessenberg, hessenberg
+export ZgornjiHessenberg, hessenberg, SpTridiag
 
 """
 ZgornjiHessenberg(H)
@@ -82,6 +82,70 @@ function hessenberg(A::AbstractMatrix)
     #print(H)
 
     return ZgornjiHessenberg(H), Q'
+end
+
+"""
+SpTridiag(sd)
+
+Podatkovni tip za spodnje tridiagonalne matrike z enicami na glavni diagonali.
+
+- sd : vektor dolžine n-1 z elementi poddiagonale
+- glavna diagonala je privzeto [1, 1, ..., 1]
+- vsi ostali elementi so 0
+"""
+struct SpTridiag
+    d::Vector{Float64}
+    sd::Vector{Float64}
+end
+
+"""
+Matrix(L)
+
+Pretvori elemente iz SpTridiag v polno matriko
+
+- Glavna diagonala je podana z vektorjem d, 
+- Poddiagonala je podana z vektorjem sd,
+- Vsi ostali elementi matrike so enaki 0.
+
+"""
+
+function Matrix(L::SpTridiag)
+    n = length(L.d)
+    M = zeros(Float64, n, n)
+    for i = 1:n
+        M[i,i] = L.d[i] #glavna diagonala
+    end
+    for i = 1:n-1
+        M[i+1,i] = L.sd[i] #poddiagonala
+    end
+    return M
+end
+
+"""
+\\(L, b)
+
+Reši sistem linearnih enačb L * x = b, kjer je L spodnja tridiagonalna
+matrika tipa SpTridiag.
+
+- Argument b je desna stran sistema.
+
+Vrne rešitev x kot vektor dolžine n.
+"""
+
+import Base: \
+
+function \(L::SpTridiag, b::Vector{Float64})
+    n = length(L.d)
+    if length(b) != n
+        throw(ArgumentError("Dimenzije se ne ujemajo"))
+    end
+
+    x = similar(b)
+    x[1] = b[1] / L.d[1]
+    for i = 2:n
+        x[i] = (b[i] - L.sd[i-1] * x[i-1]) / L.d[i]
+    end
+    return x
 end
 
 

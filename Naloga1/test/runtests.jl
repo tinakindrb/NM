@@ -68,5 +68,54 @@ TESTI funkcija hessenberg
     @test A3 ≈ Q3 * H3.H * Q3' atol=1e-10
 end
 
+"""
+TESTI za podatkovni tip SpTridiag in metodo Base.\
+"""
+
+@testset "SpTridiag konstruktor in reševanje" begin
+    # Primer: 3x3 matrika
+    d  = [1.0, 1.0, 1.0]
+    sd = [2.0, 3.0]
+    L = SpTridiag(d, sd)
+
+    # pričakovana polna oblika
+    Lfull = [1.0 0.0 0.0;
+             2.0 1.0 0.0;
+             0.0 3.0 1.0]
+
+    @test Matrix(L) ≈ Lfull atol=1e-12
+
+    # Preveri reševanje Lx = b
+    b = [1.0, 2.0, 3.0]
+    x = L \ b
+    @test Lfull * x ≈ b atol=1e-12
+
+
+    # Primer: 4x4 matrika
+    d2  = ones(4)
+    sd2 = [1.0, -2.0, 4.0]
+    L2 = SpTridiag(d2, sd2)
+
+    L2full = [1.0  0.0  0.0  0.0;
+              1.0  1.0  0.0  0.0;
+              0.0 -2.0  1.0  0.0;
+              0.0  0.0  4.0  1.0]
+
+    @test Matrix(L2) ≈ L2full atol=1e-12
+
+    b2 = [2.0, 1.0, 0.0, -3.0]
+    x2 = L2 \ b2
+    @test L2full * x2 ≈ b2 atol=1e-12
+
+    #Primer: napačne dimenzije za sistem
+    d  = [1.0, 1.0, 1.0]
+    sd = [2.0, 3.0]
+    L = SpTridiag(d, sd)
+
+    b_wrong = [1.0, 2.0] #napačne dimenzije
+
+    @test_throws ArgumentError L \ b_wrong
+end
+
 
 
