@@ -117,5 +117,47 @@ TESTI za podatkovni tip SpTridiag in metodo Base.\
     @test_throws ArgumentError L \ b_wrong
 end
 
+"""
+TESTI LU razcep za Zgornji Hessenberg
+"""
+
+@testset "LU razcep ZgornjiHessenberg" begin
+    # Primer 1: osnovna 3x3 matrika
+    A1 = [1.0  2.0  3.0;
+          4.0  5.0  6.0;
+          0.0  7.0  8.0]
+    ZH1 = ZgornjiHessenberg(A1)
+    L1, U1 = Naloga1.lu(ZH1)
+    @test Matrix(L1) * U1 ≈ A1 atol=1e-12
+
+    # Primer 2: negativni elementi
+    A2 = [-2.0  -1.0   3.0;
+           5.0   0.0  -4.0;
+           0.0  -7.0   6.0]
+    ZH2 = ZgornjiHessenberg(A2)
+    L2, U2 = Naloga1.lu(ZH2)
+    @test Matrix(L2) * U2 ≈ A2 atol=1e-12
+
+    # Primer 3: večja 4x4 matrika
+    A3 = [ 2.0   -1.0   3.0   4.0;
+           5.0    6.0  -2.0   1.0;
+           0.0   -3.0   7.0  -5.0;
+           0.0    0.0   4.0   8.0]
+    ZH3 = ZgornjiHessenberg(A3)
+    L3, U3 = Naloga1.lu(ZH3)
+    @test Matrix(L3) * U3 ≈ A3 atol=1e-12
+
+    # Primer 4: večja 5x5 matrika
+    A4 = [ 3.0   2.0   -1.0   4.0    5.0;
+           1.0  -6.0    2.0  -3.0    0.0;
+           0.0   4.0    7.0   8.0   -2.0;
+           0.0   0.0   -5.0   6.0    9.0;
+           0.0   0.0    0.0  10.0   -4.0]
+    ZH4 = ZgornjiHessenberg(A4)
+    L4, U4 = Naloga1.lu(ZH4)
+    @test Matrix(L4) * U4 ≈ A4 atol=1e-12
+end
+
+
 
 

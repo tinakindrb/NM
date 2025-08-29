@@ -2,7 +2,7 @@ module Naloga1
 
 using LinearAlgebra
 
-export ZgornjiHessenberg, hessenberg, SpTridiag
+export ZgornjiHessenberg, hessenberg, SpTridiag, lu
 
 """
 ZgornjiHessenberg(H)
@@ -148,5 +148,37 @@ function \(L::SpTridiag, b::Vector{Float64})
     return x
 end
 
+"""
+lu(H)
 
-end # modul Naloga1
+Izvede LU razcep zgornje Hessenbergove matrike H.
+
+Vrne:
+- L : spodnja tridiagonalna matrika tipa SpTridiag z enicami na diagonali,
+- U : zgornje trikotna matrika.
+"""
+function lu(Z::ZgornjiHessenberg)
+    H = copy(Z.H)
+    n = size(H, 1)
+
+    d  = ones(Float64, n) #glavna diagonala L (same enice)
+    sd = zeros(Float64, n-1) #poddiagonala L
+    U  = zeros(Float64, n, n) #U kot polna matrika
+
+    #inicializacija prve vrstice U
+    U[1, :] = H[1, :]
+
+    for i = 1:n-1
+        #element L[i+1, i]
+        sd[i] = H[i+1, i] / U[i, i]
+
+        #naslednja vrstica v U
+        U[i+1, i+1:n] = H[i+1, i+1:n] - sd[i] * U[i, i+1:n]
+    end
+
+    L = SpTridiag(d, sd)
+    return L, U
+end
+
+
+end #modul Naloga1
