@@ -1,4 +1,6 @@
-using Naloga1, Test, LinearAlgebra
+using Test, LinearAlgebra
+include("../src/Naloga1.jl")
+using .Naloga1
 
 """
 TESTI podatkovni tip ZgornjiHessenberg
