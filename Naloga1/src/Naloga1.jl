@@ -2,7 +2,7 @@ module Naloga1
 
 using LinearAlgebra
 
-export ZgornjiHessenberg, hessenberg, SpTridiag, lu
+export ZgornjiHessenberg, hessenberg, SpTridiag, lu, inv_lastni
 
 """
 ZgornjiHessenberg(H)
@@ -49,7 +49,6 @@ tako da velja: H = Q'*A*Q
 - H : ZgornjiHessenberg (zgornja Hessenbergova matrika)
 - Q : ortogonalna matrika
 """
-
 function hessenberg(A::AbstractMatrix)
     n, m = size(A)
 
@@ -108,7 +107,6 @@ Pretvori elemente iz SpTridiag v polno matriko
 - Vsi ostali elementi matrike so enaki 0.
 
 """
-
 function Matrix(L::SpTridiag)
     n = length(L.d)
     M = zeros(Float64, n, n)
@@ -121,19 +119,16 @@ function Matrix(L::SpTridiag)
     return M
 end
 
+import Base: \
 """
 \\(L, b)
 
 Reši sistem linearnih enačb L * x = b, kjer je L spodnja tridiagonalna
-matrika tipa SpTridiag.
+matrika tipa SpTridiag. Argument b je desna stran sistema.
 
-- Argument b je desna stran sistema.
-
-Vrne rešitev x kot vektor dolžine n.
+Izhod:
+- vektor x dolžine n
 """
-
-import Base: \
-
 function \(L::SpTridiag, b::Vector{Float64})
     n = length(L.d)
     if length(b) != n
@@ -153,7 +148,7 @@ lu(H)
 
 Izvede LU razcep zgornje Hessenbergove matrike H.
 
-Vrne:
+Izhod:
 - L : spodnja tridiagonalna matrika tipa SpTridiag z enicami na diagonali,
 - U : zgornje trikotna matrika.
 """
@@ -180,5 +175,56 @@ function lu(Z::ZgornjiHessenberg)
     return L, U
 end
 
+
+"""
+inv_lastni(A, l)
+
+Inverzna potenčna metoda za iskanje lastne vrednosti in lastnega vektorja matrike A
+z začetnim približkom l.
+
+Izhod:
+- lambda : približek lastne vrednosti
+- vektor : pripadajoči lastni vektor
+"""
+function inv_lastni(A::AbstractMatrix, l::Float64)
+    maxiter = 1000
+    tol = 1e-6
+    n = size(A, 1)
+
+    #Hessenbergov razcep
+    H, Q = hessenberg(A)
+
+    #matrika (H - lI)
+    Hshift = H.H - l * I
+    ZH = ZgornjiHessenberg(Hshift)
+    L, U = lu(ZH)
+
+    #naključni začetni vektor
+    x = randn(n)
+    x /= norm(x)
+
+    for iter = 1:maxiter
+        #rešujemo L(U xnew) = x
+        y = L \ x
+        xnew = U \ y
+
+        #normiranje
+        xnew /= norm(xnew)
+
+        #preveri konvergenco
+        if norm(xnew - x) < tol
+            x = xnew
+            break
+        end
+
+        x = xnew
+    end
+
+    #lastna vrednost
+    lambda = (x' * H.H * x) / (x' * x)
+
+    #vrnemo lastni vektor v originalnem prostoru
+    return lambda, Q * x
+end
 
 end #modul Naloga1

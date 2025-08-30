@@ -1,0 +1,236 @@
+        - module Naloga1
+        - 
+        - using LinearAlgebra
+        - 
+        - export ZgornjiHessenberg, hessenberg, SpTridiag, lu, inv_lastni
+        - 
+        - """
+        - ZgornjiHessenberg(H)
+        - 
+        - Podatkovni tip za zgornje Hessenbergove matrike. Shranjuje kvadratno matriko H,
+        - ki ima lahko neničelne elemente na glavni diagonali, na prvi poddiagonali in
+        - na vseh naddiagonalnih mestih. Vsi elementi pod prvo poddiagonalo morajo biti 0.
+        - """
+        - struct ZgornjiHessenberg
+        -     H::Matrix{Float64}
+        - 
+       36     function ZgornjiHessenberg(H::AbstractMatrix)
+       36         n, m = size(H)
+       36         if n != m
+        1             error("Matrika mora biti kvadratna.")
+        -         end
+        -         # preverimo Hessenberg lastnost: ničle pod drugo poddiagonalo
+       35         for i = 3:n
+       50             for j = 1:(i-2)
+       66                 if abs(H[i, j]) > 1e-12
+        1                     error("Matrika ni zgornja Hessenbergova (element H[$i,$j] ≠ 0).")
+        -                 end
+       81             end
+       64         end
+       34         new(Matrix{Float64}(H))
+        -     end
+        - end
+        - 
+        - Base.show(io::IO, Z::ZgornjiHessenberg) = print(io, "ZgornjiHessenberg:\n", Z.H)
+        - 
+        - """
+        - hessenberg(A)
+        - 
+        - Pretvori kvadratno matriko A v zgornjo Hessenbergovo obliko s pomočjo
+        - Householderjevih zrcaljenj.
+        - 
+        - Rezultat je matrika H tipa ZgornjiHessenberg in ortogonalna matrika Q,
+        - tako da velja: H = Q'*A*Q
+        - 
+        - # Vhod:
+        - - A : kvadratna matrika
+        - 
+        - # Izhod:
+        - - H : ZgornjiHessenberg (zgornja Hessenbergova matrika)
+        - - Q : ortogonalna matrika
+        - """
+        - 
+       15 function hessenberg(A::AbstractMatrix)
+       15     n, m = size(A)
+        - 
+       15     H = Matrix{Float64}(A) # kopija A
+       15     Q = Matrix{Float64}(I, n, n)
+        - 
+       15     for k = 1:n-2
+        -         # vektor pod diagonalo v stolpcu k
+       45         x = H[k+1:n, k]
+        - 
+        -         # Householderjev vektor
+       45         e = zeros(length(x))
+       20         e[1] = norm(x)
+       20         if norm(x) == 0
+        2             v = zeros(size(x))
+        -         else
+       19             v = sign(x[1]) * e + x
+       19             v /= norm(v)
+        -         end
+        - 
+        -         # refleksija
+       20         P = Matrix{Float64}(I, length(v), length(v)) - 2 * (v * v')
+        - 
+        -         # posodobimo H in Q (uporabimo P na pravem podbloku)
+       20         H[k+1:n, k:n] = P * H[k+1:n, k:n]
+       20         H[1:n, k+1:n] = H[1:n, k+1:n] * P
+       20         Q[k+1:n, :]   = P * Q[k+1:n, :]
+       25     end
+        - 
+        -     #print(H)
+        - 
+       15     return ZgornjiHessenberg(H), Q'
+        - end
+        - 
+        - """
+        - SpTridiag(sd)
+        - 
+        - Podatkovni tip za spodnje tridiagonalne matrike z enicami na glavni diagonali.
+        - 
+        - - sd : vektor dolžine n-1 z elementi poddiagonale
+        - - glavna diagonala je privzeto [1, 1, ..., 1]
+        - - vsi ostali elementi so 0
+        - """
+        - struct SpTridiag
+       19     d::Vector{Float64}
+        -     sd::Vector{Float64}
+        - end
+        - 
+        - """
+        - Matrix(L)
+        - 
+        - Pretvori elemente iz SpTridiag v polno matriko
+        - 
+        - - Glavna diagonala je podana z vektorjem d, 
+        - - Poddiagonala je podana z vektorjem sd,
+        - - Vsi ostali elementi matrike so enaki 0.
+        - 
+        - """
+        - 
+        6 function Matrix(L::SpTridiag)
+        6     n = length(L.d)
+       84     M = zeros(Float64, n, n)
+        6     for i = 1:n
+       22         M[i,i] = L.d[i] #glavna diagonala
+       38     end
+        6     for i = 1:n-1
+       16         M[i+1,i] = L.sd[i] #poddiagonala
+       26     end
+        6     return M
+        - end
+        - 
+        - """
+        - \\(L, b)
+        - 
+        - Reši sistem linearnih enačb L * x = b, kjer je L spodnja tridiagonalna
+        - matrika tipa SpTridiag. Argument b je desna stran sistema.
+        - 
+        - Izhod:
+        - - vektor x dolžine n
+        - """
+        - 
+        - import Base: \
+        - 
+     4278 function \(L::SpTridiag, b::Vector{Float64})
+     4278     n = length(L.d)
+     4278     if length(b) != n
+        1         throw(ArgumentError("Dimenzije se ne ujemajo"))
+        -     end
+        - 
+     8554     x = similar(b)
+     4277     x[1] = b[1] / L.d[1]
+     4277     for i = 2:n
+    10594         x[i] = (b[i] - L.sd[i-1] * x[i-1]) / L.d[i]
+    16911     end
+     4277     return x
+        - end
+        - 
+        - """
+        - lu(H)
+        - 
+        - Izvede LU razcep zgornje Hessenbergove matrike H.
+        - 
+        - Izhod:
+        - - L : spodnja tridiagonalna matrika tipa SpTridiag z enicami na diagonali,
+        - - U : zgornje trikotna matrika.
+        - """
+       16 function lu(Z::ZgornjiHessenberg)
+       16     H = copy(Z.H)
+       16     n = size(H, 1)
+        - 
+       56     d  = ones(Float64, n) #glavna diagonala L (same enice)
+       40     sd = zeros(Float64, n-1) #poddiagonala L
+      202     U  = zeros(Float64, n, n) #U kot polna matrika
+        - 
+        -     #inicializacija prve vrstice U
+       16     U[1, :] = H[1, :]
+        - 
+       16     for i = 1:n-1
+        -         #element L[i+1, i]
+       40         sd[i] = H[i+1, i] / U[i, i]
+        - 
+        -         #naslednja vrstica v U
+       40         U[i+1, i+1:n] = H[i+1, i+1:n] - sd[i] * U[i, i+1:n]
+       64     end
+        - 
+       16     L = SpTridiag(d, sd)
+       16     return L, U
+        - end
+        - 
+        - 
+        - """
+        - inv_lastni(A, l)
+        - 
+        - Inverzna potenčna metoda za iskanje lastne vrednosti in lastnega vektorja matrike A
+        - z začetnim približkom l.
+        - 
+        - Izhod:
+        - - lambda : približek lastne vrednosti
+        - - vektor : pripadajoči lastni vektor
+        - """
+       12 function inv_lastni(A::AbstractMatrix, l::Float64)
+       12     maxiter = 1000
+       12     tol = 1e-6
+       12     n = size(A, 1)
+        - 
+        -     #Hessenbergov razcep
+       12     H, Q = hessenberg(A)
+        - 
+        -     # matrika (H - lI)
+       12     Hshift = H.H - l * I
+       12     ZH = ZgornjiHessenberg(Hshift)
+       12     L, U = lu(ZH)
+        - 
+        -     # naključni začetni vektor
+       24     x = randn(n)
+       12     x /= norm(x)
+        - 
+       12     for iter = 1:maxiter
+        -         # rešujemo L(U x_{new}) = x
+     4275         y = L \ x
+     4275         xnew = U \ y
+        - 
+        -         # normiranje
+     4275         xnew /= norm(xnew)
+        - 
+        -         # preveri konvergenco
+     4275         if norm(xnew - x) < tol
+        8             x = xnew
+        8             break
+        -         end
+        - 
+     4267         x = xnew
+     4267     end
+        - 
+        -     # lastna vrednost z Rayleighovim kvocientom
+       12     lambda = (x' * H.H * x) / (x' * x)
+        - 
+        -     # vrnemo lastni vektor v originalnem prostoru
+       12     return lambda, Q * x
+        - end
+        - 
+        - 
+        - 
+        - end #modul Naloga1

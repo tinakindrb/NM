@@ -1,0 +1,5 @@
+\begin{MintedVerbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{n}{include}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{demo.jl}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}
+\PYG{k}{using}\PYG{+w}{ }\PYG{o}{.}\PYG{n}{Naloga1}
+\PYG{n}{nariši\PYGZus{}polinom\PYGZus{}s\PYGZus{}konvergenco}\PYG{p}{(}\PYG{p}{[}\PYG{l+m+mf}{1.0}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{2.0}\PYG{p}{,}\PYG{+w}{ }\PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{4.0}\PYG{p}{,}\PYG{+w}{ }\PYG{l+m+mf}{6.0}\PYG{p}{]}\PYG{p}{)}
+\end{MintedVerbatim}

@@ -1,0 +1,91 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[a4paper,text={16.5cm,25.2cm},centering]{geometry}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{minted}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.2ex}
+
+\hypersetup
+       {   pdfauthor = {  },
+           pdftitle={  },
+           colorlinks=TRUE,
+           linkcolor=black,
+           citecolor=blue,
+           urlcolor=blue
+       }
+
+
+
+
+
+
+\begin{document}
+
+
+
+\section{Inverzna potenčna metoda za zgornjo Hessenbergovo matriko}
+Tina Brdnik
+
+\subsection{Opis naloge}
+V poročilu je opisana implementacija inverzne potenčne metode za določanje lastnih vektorjev matrike.  Metoda temelji na zaporedju: 
+
+\[
+x^{(n+1)} = \frac{A_{\lambda}^{-1} \, x^{(n)}}{\left\| A_{\lambda}^{-1} x^{(n)} \right\|_{\infty}}, \quad A_{\lambda} = A - \lambda I
+\]
+ki konvergira k lastnemu vektorju, ki pripada lastni vrednosti matrike $A$ najbližji \ensuremath{\lambda}.
+
+Za zmanjšanje števila operacij, matriko $A$ najprej pretvorimo v zgornjo  Hessenbergovo obliko, s Householderjevimi zrcaljenji, saj ta ohrani lastne  vrednosti in hkrati poenostavi LU razcep, saj ima matrika redko obliko.
+
+\subsection{Opis rešitve}
+Implementacija algoritma poteka v več korakih:
+
+\begin{itemize}
+\item[1. ] Pretvorba matrike v Hessenbergovo obliko  
+
+\end{itemize}
+Matriko $A$ najprej pretvorimo v zgornjo Hessenbergovo obliko s pomočjo Householderjevih zrcaljenj. S tem odpravimo elemente pod drugo poddiagonalo in dobimo matriko $H$, za katero velja $H = Q^T A Q$, pri čemer je $Q$ ortogonalna matrika. Ker imata $A$ in $H$ enake lastne vrednosti, lahko nadaljnji izračun izvajamo na $H$.  
+
+Prednost Hessenbergove oblike je, da omogoča učinkovitejši LU razcep, saj je matrika $L$ spodnje tridiagonalna, matrika $U$ pa zgornjetrikotna. Tako se časovna zahtevnost razcepa zmanjša iz $\mathcal{O}(n^3)$ na $\mathcal{O}(n^2)$.
+
+\begin{itemize}
+\item[2. ] LU razcep  
+
+\end{itemize}
+Za reševanje sistemov izvedemo LU razcep zgornje Hessenbergove matrike. Pri tem ostane $U$ zgornjetrikotna, $L$ pa spodnje tridiagonalna z enicami na diagonali. Zaradi redke strukture poteka eliminacija le ob diagonali, kar zagotavlja časovno zahtevnost $\mathcal{O}(n^2)$.
+
+\begin{itemize}
+\item[3. ] Inverzna iteracija  
+
+\end{itemize}
+Inverzna potenčna metoda poišče lastno vrednost matrike, ki je najbližja podanemu približku. Na vsakem koraku rešimo sistem $(A - \lambda I)y = x$ in dobljeni vektor normiramo. Ker račun poteka na Hessenbergovi obliki in uporabljamo LU razcep, je metoda bistveno hitrejša kot v splošnem primeru.
+
+\begin{itemize}
+\item[4. ] Rekonstrukcija lastnega vektorja  
+
+\end{itemize}
+Če je $v$ lastni vektor Hessenbergove matrike $H$, potem je $Qv$ lastni vektor izvorne matrike $A$.
+
+\subsection{Primer uporabe}
+Inverzno iteracijo smo preizkusili na matriki polinoma:
+
+\[
+p(x) = x^3 - 2x^2 - 4x + 6,
+\]
+katere lastne vrednosti ustrezajo ničlam polinoma.   Na spodnji sliki je narisan graf polinoma, ničle in poti konvergence za različne začetne približke $x_0$.
+
+
+\begin{minted}[texcomments = true, mathescape, fontsize=\small, xleftmargin=0.5em]{julia}
+include("demo.jl")
+using .Naloga1
+nariši_polinom_s_konvergenco([1.0, -2.0, -4.0, 6.0])
+\end{minted}
+\includegraphics[width=\linewidth]{jl_JK0jy7/porocilo_0_1.pdf}
+
+
+\end{document}

@@ -158,6 +158,56 @@ TESTI LU razcep za Zgornji Hessenberg
     @test Matrix(L4) * U4 ≈ A4 atol=1e-12
 end
 
+"""
+TESTI inv_lastni
+"""
+
+
+@testset "inv_lastni metoda" begin
+    # Primer 1: 3x3 matrika
+    A1 = [4.0 1.0 2.0;
+          1.0 3.0 1.0;
+          2.0 1.0 3.0]
+
+    eivals1 = [1.4116, 2.4064, 6.1819]
+    sigmaValues1 = [0.0, 1.0, 2.0, 5.0, 10.0, -10.0, 3.0]
+
+    for sigma in sigmaValues1
+        λ, x = inv_lastni(A1, sigma)
+        idx = argmin(abs.(eivals1 .- λ))
+        expectedλ = eivals1[idx]
+
+        @test λ ≈ expectedλ atol=1e-4
+
+        x /= norm(x)
+        @test A1 * x ≈ λ * x atol=1e-4
+    end
+
+
+    # Primer 2: 4x4 matrika
+    A2 = [5.0 4.0 2.0 1.0;
+          4.0 5.0 1.0 2.0;
+          2.0 1.0 4.0 3.0;
+          1.0 2.0 3.0 6.0]
+
+    eivals2 = [0.3381, 2.4501, 5.6259, 11.5858]
+    sigmaValues2 = [0.0, 2.0, 4.0, 6.0, 10.0]
+
+    for sigma in sigmaValues2
+        λ, x = inv_lastni(A2, sigma)
+        idx = argmin(abs.(eivals2 .- λ))
+        expectedλ = eivals2[idx]
+
+        @test λ ≈ expectedλ atol=1e-4
+
+        x /= norm(x)
+        @test A2 * x ≈ λ * x atol=1e-4
+    end
+end
+
+
+
+
 
 
 
