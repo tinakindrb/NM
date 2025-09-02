@@ -1,0 +1,10 @@
+name = "Naloga2"
+uuid = "d8dc4578-1406-4b80-baf7-cce9e3366a56"
+authors = ["tinakindrb "]
+version = "0.1.0"
+
+[deps]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[compat]
+Test = "1.11.0"
