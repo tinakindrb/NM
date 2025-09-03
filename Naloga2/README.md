@@ -15,9 +15,9 @@ Bézierjeva krivulja je definirana s kontrolnimi točkami in Bernsteinovimi
 polinomi. Odvod krivulje smo izračunali analitično, saj je odvod Bézierjeve
 krivulje spet Bézierjeva krivulja nižje stopnje. Ploščina je nato
 izračunana po formuli
-\[
-A = \tfrac{1}{2}\int_0^1 (x(t)y'(t) - x'(t)y(t))\,dt,
-\]
+$$
+A = \tfrac{1}{2}\int_0^1 \big(x(t)y'(t) - x'(t)y(t)\big)\,dt
+$$
 pri čemer smo integracijo izvedli z uporabo Simpsonovega pravila.  
 
 
