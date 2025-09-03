@@ -1,0 +1,16 @@
+\begin{MintedVerbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{n}{include}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{demo.jl}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}
+\PYG{k}{using}\PYG{+w}{ }\PYG{o}{.}\PYG{n}{Naloga2}
+\PYG{n}{kontrolne\PYGZus{}tocke}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{p}{[}
+\PYG{+w}{    }\PYG{l+m+mf}{0.0}\PYG{+w}{ }\PYG{l+m+mf}{0.0}\PYG{p}{;}
+\PYG{+w}{    }\PYG{l+m+mf}{1.0}\PYG{+w}{ }\PYG{l+m+mf}{1.0}\PYG{p}{;}
+\PYG{+w}{    }\PYG{l+m+mf}{2.0}\PYG{+w}{ }\PYG{l+m+mf}{3.0}\PYG{p}{;}
+\PYG{+w}{    }\PYG{l+m+mf}{1.0}\PYG{+w}{ }\PYG{l+m+mf}{4.0}\PYG{p}{;}
+\PYG{+w}{    }\PYG{l+m+mf}{0.0}\PYG{+w}{ }\PYG{l+m+mf}{4.0}\PYG{p}{;}
+\PYG{+w}{   }\PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{1.0}\PYG{+w}{ }\PYG{l+m+mf}{3.0}\PYG{p}{;}
+\PYG{+w}{    }\PYG{l+m+mf}{0.0}\PYG{+w}{ }\PYG{l+m+mf}{1.0}\PYG{p}{;}
+\PYG{+w}{    }\PYG{l+m+mf}{1.0}\PYG{+w}{ }\PYG{l+m+mf}{0.0}
+\PYG{p}{]}
+\PYG{n}{area}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{plot\PYGZus{}bezier}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{demo\PYGZus{}bezier}\PYG{p}{(}\PYG{n}{kontrolne\PYGZus{}tocke}\PYG{p}{;}\PYG{+w}{ }\PYG{n}{n}\PYG{o}{=}\PYG{l+m+mi}{2000}\PYG{p}{,}\PYG{+w}{ }\PYG{n}{nt}\PYG{o}{=}\PYG{l+m+mi}{10\PYGZus{}000}\PYG{p}{)}
+\PYG{n}{display}\PYG{p}{(}\PYG{n}{plot\PYGZus{}bezier}\PYG{p}{)}
+\end{MintedVerbatim}

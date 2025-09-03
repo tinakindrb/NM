@@ -1,5 +1,2 @@
 [deps]
-Coverage = "a2441757-f6aa-5fb2-8edb-039e3f45d037"
-Naloga2 = "d8dc4578-1406-4b80-baf7-cce9e3366a56"
 SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
-Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
