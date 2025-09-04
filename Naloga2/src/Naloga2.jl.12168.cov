@@ -5,7 +5,7 @@
         - """
         - simpsonovo_pravilo(f, a, b, n)
         - 
-        - Izračuna približek določenega integrala funkcijef na intervalu [a,b] z 
+        - Izračuna približek določenega integrala funkcije f na intervalu [a,b] z 
         - uporabo sestavljenega Simpsonovega pravila.
         - 
         - Vhod:
@@ -45,7 +45,7 @@
         - - Za x = 0: F(0) = 0.5.
         - 
         - Vhod:
-        - - x : vrednost, pri kateri računamo CDF
+        - - x : vrednost, pri kateri računamo porazdelitveno funkcijo
         - - n: število podintervalov za Simpsonovo pravilo (privzeto 2000)
         - 
         - Izhod:
@@ -66,6 +66,7 @@
         2         return 1.0 - F(-x; n=n)
         -     end
         - end
+        - 
         - 
         - """
         - binomski(n, k)
@@ -109,13 +110,18 @@
        14     return krivulja
         - end
         - 
+        - 
         - """
         - bezier_in_odvod(kontrolne_tocke, t_vrednosti)
         - 
         - Izračuna točke Bézierjeve krivulje in njen odvod
         - za dane kontrolne točke in parametre.
         - 
-        - Vrne:
+        - Vhod:
+        - - kontrolne_tocke : matrika velikosti (n+1)×2, vsaka vrstica je točka (x,y).
+        - - t_vrednosti : vektor vrednosti parametra t ∈ [0,1].
+        - 
+        - Izhod:
         - - matriko točk na krivulji
         - - matriko točk odvoda (x'(t), y'(t))
         - """
@@ -166,7 +172,5 @@
         4     integral = simpsonovo_pravilo(integrand, 0.0, 1.0, n)
         4     return 0.5 * integral
         - end
-        - 
-        - 
         - 
         - end # module Naloga2

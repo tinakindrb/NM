@@ -21,7 +21,7 @@ pri čemer smo integracijo izvedli z uporabo Simpsonovega pravila.
 
 
 ## Primer uporabe
-Primer uporabe je prikazan v programu, ki se nahaja v 'doc/demo.jl'. Poženemo ga v interaktivni zanki Julie z ukazi:
+Primera uporabe sta prikazana v programu, ki se nahaja v 'doc/demo.jl'. Poženemo ga v interaktivni zanki Julie z ukazi:
 
 **Za prvo nalogo**
 ```jl
@@ -43,7 +43,6 @@ kontrolne_tocke = [
     0.0 1.0;
     1.0 0.0
 ]
-
 area, plot_bezier = demo_bezier(kontrolne_tocke; n=2000, nt=10_000)
 display(plot_bezier)
 ```
