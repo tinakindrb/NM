@@ -1,0 +1,176 @@
+        - module Naloga2
+        - 
+        - export simpsonovo_pravilo, F, binomski, bezier, bezier_in_odvod, ploscina_bezier
+        - 
+        - """
+        - simpsonovo_pravilo(f, a, b, n)
+        - 
+        - Izračuna približek določenega integrala funkcije f na intervalu [a,b] z 
+        - uporabo sestavljenega Simpsonovega pravila.
+        - 
+        - Vhod:
+        - - f : funkcija, ki jo integriramo
+        - - a : začetek intervala integracije
+        - - b : konec intervala integracije
+        - - n : število podintervalov (mora biti sodo)
+        - 
+        - Izhod: 
+        - - približek integrala
+        - """
+       11 function simpsonovo_pravilo(f, a::Float64, b::Float64, n::Int)
+       11     if n % 2 != 0
+        1         error("Število intervalov n mora biti sodo.")
+        -     end
+       10     h = (b - a) / n
+       10     S = f(a) + f(b)
+       20     for i in 1:2:(n-1)
+     7002         S += 4 * f(a + i*h)
+    13994     end
+       19     for i in 2:2:(n-2)
+     6992         S += 2 * f(a + i*h)
+    13974     end
+       10     return S * h / 3
+        - end
+        - 
+        - 
+        - """
+        - F(x; n=2000)
+        - 
+        - Porazdelitvena funkcija standardne normalne porazdelitve N(0,1)
+        - 
+        - Metoda:
+        - - Za x > 0: integral na intervalu [0, x] z uporabo Simpsonovega pravila.
+        - - Za x < 0: uporabi simetrijo F(x) = 1 - F(-x).
+        - - Za zelo velike |x|: uporabi asimptotsko aproksimacijo repa porazdelitve.
+        - - Za x = 0: F(0) = 0.5.
+        - 
+        - Vhod:
+        - - x : vrednost, pri kateri računamo porazdelitveno funkcijo
+        - - n: število podintervalov za Simpsonovo pravilo (privzeto 2000)
+        - 
+        - Izhod:
+        - - približek F(x)
+        - """
+       18 function F(x::Float64; n=2000)
+     8014     pdf(t) = exp(-t^2/2) / sqrt(2π)  # gostota normalne porazdelitve
+        -     
+        9     if x < -8
+        1         return 0.0
+        8     elseif x > 8
+        1         return 1.0 - pdf(x) / (x + 1/x)
+        7     elseif x == 0.0
+        1         return 0.5
+        6     elseif x > 0
+        4         return 0.5 + simpsonovo_pravilo(pdf, 0.0, x, n)
+        -     else
+        2         return 1.0 - F(-x; n=n)
+        -     end
+        - end
+        - 
+        - 
+        - """
+        - binomski(n, k)
+        - 
+        - Izračuna binomski koeficient "n nad k".
+        - """
+       49 function binomski(n::Int, k::Int)
+       97     if k < 0 || k > n
+        2         return 0
+        -     end
+       47     k = min(k, n-k)
+       47     c = 1
+       47     for i in 1:k
+       29         c = c * (n - (k - i)) ÷ i
+       40     end
+       47     return c
+        - end
+        - 
+        - 
+        - """
+        - bezier(kontrolne_tocke, t_vrednosti)
+        - 
+        - Izračuna točke Bézierjeve krivulje za dane kontrolne točke in parametre.
+        - 
+        - Vhod:
+        - - kontrolne_tocke : matrika velikosti (n+1)x2, vsaka vrstica je točka (x,y).
+        - - t_vrednosti : vektor vrednosti parametra t ∈ [0,1].
+        - 
+        - Izhod:
+        - - matrika velikosti length(t_vrednosti)x2 z izračunanimi točkami na krivulji.
+        - """
+       14 function bezier(kontrolne_tocke::Matrix{Float64}, t_vrednosti::Vector{Float64})
+       14     n = size(kontrolne_tocke, 1) - 1
+    20050     krivulja = zeros(length(t_vrednosti), 2)
+        - 
+       14     for i in 0:n
+       86         binomski_koef = binomski(n, i)
+       86         bernsteinov_polinom = binomski_koef .* (t_vrednosti.^i) .* ((1 .- t_vrednosti).^(n-i))
+       86         krivulja .+= bernsteinov_polinom .* kontrolne_tocke[i+1, :]'
+       72     end
+       14     return krivulja
+        - end
+        - 
+        - 
+        - """
+        - bezier_in_odvod(kontrolne_tocke, t_vrednosti)
+        - 
+        - Izračuna točke Bézierjeve krivulje in njen odvod
+        - za dane kontrolne točke in parametre.
+        - 
+        - Vhod:
+        - - kontrolne_tocke : matrika velikosti (n+1)×2, vsaka vrstica je točka (x,y).
+        - - t_vrednosti : vektor vrednosti parametra t ∈ [0,1].
+        - 
+        - Izhod:
+        - - matriko točk na krivulji
+        - - matriko točk odvoda (x'(t), y'(t))
+        - """
+        6 function bezier_in_odvod(kontrolne_tocke::Matrix{Float64}, t_vrednosti::Vector{Float64})
+        6     n = size(kontrolne_tocke, 1) - 1
+        - 
+        -     # krivulja stopnje n
+        6     krivulja = bezier(kontrolne_tocke, t_vrednosti)
+        - 
+        -     # kontrolne točke za odvod (razlike med zaporednimi)
+        6     odvodne_tocke = [n .* (kontrolne_tocke[i+1,:] .- kontrolne_tocke[i,:]) for i in 1:n]
+       12     odvodne_tocke = permutedims(hcat(odvodne_tocke...))  # velikost n × 2 (prava matrika)
+        - 
+        -     # odvod je Bézierjeva krivulja stopnje n-1
+        6     odvodi = bezier(odvodne_tocke, t_vrednosti)
+        - 
+        6     return krivulja, odvodi
+        - end
+        - 
+        - 
+        - """
+        - ploscina_bezier(kontrolne_tocke; n=1000)
+        - 
+        - Izračuna ploščino, ki jo omejuje Bézierjeva krivulja,
+        - z uporabo formule 1/2 ∫ (x(t)*y'(t) - x'(t)*y(t)) dt.
+        - 
+        - Vhod:
+        - - kontrolne_tocke : matrika velikosti (m)x2, kontrolne točke (x,y).
+        - - n : število podintervalov za Simpsonovo pravilo (privzeto 1000).
+        - 
+        - Izhod:
+        - - ploščina.
+        - """
+        8 function ploscina_bezier(kontrolne_tocke::Matrix{Float64}; n::Int=1000)
+        4     t_vrednosti = range(0.0, 1.0; length=n+1)
+        - 
+        4     krivulja, odvodi = bezier_in_odvod(kontrolne_tocke, collect(t_vrednosti))
+     5004     x = krivulja[:,1]
+     5004     y = krivulja[:,2]
+     5004     dx_dt = odvodi[:,1]
+     5004     dy_dt = odvodi[:,2]
+        - 
+     5008     integrand(t) = begin
+     5004         i = Int(round(t*n)) + 1
+     5004         return x[i]*dy_dt[i] - y[i]*dx_dt[i]
+        -     end
+        - 
+        4     integral = simpsonovo_pravilo(integrand, 0.0, 1.0, n)
+        4     return 0.5 * integral
+        - end
+        - 
+        - end # module Naloga2
