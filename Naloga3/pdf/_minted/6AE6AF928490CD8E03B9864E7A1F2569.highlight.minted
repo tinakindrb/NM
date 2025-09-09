@@ -1,0 +1,5 @@
+\begin{MintedVerbatim}[commandchars=\\\{\},codes={\catcode`\$=3\catcode`\^=7\catcode`\_=8\relax}]
+\PYG{n}{include}\PYG{p}{(}\PYG{l+s}{\PYGZdq{}}\PYG{l+s}{demo.jl}\PYG{l+s}{\PYGZdq{}}\PYG{p}{)}
+\PYG{n}{plt}\PYG{+w}{ }\PYG{o}{=}\PYG{+w}{ }\PYG{n}{demo\PYGZus{}nihalo}\PYG{p}{(}\PYG{p}{)}
+\PYG{n}{display}\PYG{p}{(}\PYG{n}{plt}\PYG{p}{)}
+\end{MintedVerbatim}

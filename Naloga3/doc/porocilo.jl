@@ -26,14 +26,12 @@
 #' Implementacija je razdeljena na več funkcij, združenih v modulu `Naloga3`:
 #'
 #' 1. **Metoda DOPRI5**  
-#' Funkcija `dopri5` je lastna implementacija metode Dormand–Prince 5. reda (DOPRI5) z
-#' adaptivnim korakom. Metoda uporablja oceno napake med približkom 5. in 4. reda ter
-#' na tej osnovi povečuje ali zmanjšuje dolžino koraka. S tem zagotavlja visoko
-#' natančnost pri optimalnem številu korakov.
+#' Funkcija `dopri5` je lastna implementacija metode Dormand–Prince 5. reda (DOPRI5) z adaptivnim korakom. 
+#' Metoda uporablja oceno napake med približkom 5. in 4. reda ter na tej osnovi povečuje ali zmanjšuje dolžino koraka. 
+#' S tem zagotavlja visoko natančnost pri optimalnem številu korakov.
 #'
 #' 2. **Sistem matematičnega nihala**  
-#' Enačbo drugega reda smo pretvorili v sistem prvega reda in zapisali funkcijo
-#' `sistem_nihalo(t,y)`, ki vrača odvode $[\theta', \omega']$ za dano stanje.
+#' Enačbo drugega reda smo pretvorili v sistem prvega reda in zapisali funkcijo 'sistem_nihalo(t,y)', ki vrača odvode $[\theta', \omega']$ za dano stanje.
 #'
 #' 3. **Energija sistema**  
 #' Funkcija `energija_nihalo(y)` izračuna mehansko energijo nihala kot:
@@ -46,7 +44,22 @@
 #' numerične metode.
 #'
 #' 4. **Reševanje nihala**  
-#' Funkcija `resi_nihalo(zacetni_kot, zacetna_kotna_hitrost, cas_konec)` uporabi
-#' metodo `dopri5` in funkcijo `sistem_nihalo` za izračun rešitve na podanem časovnem
-#' intervalu. Rezultat sta vektor časov in matrika, ki vsebuje vrednosti kota in
-#' kotne hitrosti v teh časih.
+#' Funkcija `resi_nihalo(zacetni_kot, zacetna_kotna_hitrost, cas_konec)` uporabi metodo `dopri5` in funkcijo `sistem_nihalo` za izračun rešitve na podanem časovnem intervalu. 
+#' Rezultat sta vektor časov in matrika, ki vsebuje vrednosti kota in kotne hitrosti v teh časih.
+#' ## Rezultati
+#'
+#' Rešili smo sistem enačb za matematično nihalo in rezultate primerjali s harmoničnim nihalom. 
+#'
+#' Za manjše začetne kote se rešitvi skoraj popolnoma ujemata. 
+#' Če pa začetni kot povečamo, se pojavi razlika: matematično nihalo niha počasneje kot harmonično.
+#'
+#' Na prvem grafu vidimo potek kota skozi čas za oba nihala. 
+#' Pri majhnih odmikov krivulji potekata skupaj, pri večjih pa se sčasoma vedno bolj razlikujeta.
+#'
+#' Izračunali smo tudi nihajni čas matematičnega nihala za različne začetne kote.
+#' Vsakemu začetnemu kotu smo priredili začetno energijo in narisali graf odvisnosti nihajnega časa od energije.
+#'
+#' Rezultati kažejo, da ima harmonično nihalo vedno enak nihajni čas, medtem ko pri matematičnem nihalu nihajni čas narašča z začetno energijo, kar je pričakovano.
+include("demo.jl")
+plt = demo_nihalo()
+display(plt)

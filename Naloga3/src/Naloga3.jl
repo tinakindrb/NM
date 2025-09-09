@@ -4,7 +4,6 @@ using LinearAlgebra
 
 export dopri5, sistem_nihalo, energija_nihalo, resi_nihalo
 
-
 """
 dopri5(f, tspan, y0, epsilon, sigma)
 
@@ -26,7 +25,7 @@ function dopri5(f, tspan, y0, epsilon, sigma)
     t0, tf = tspan
     t = t0
     y = copy(y0)
-    h = (tf - t0) / 100   # začetni korak
+    h = (tf - t0) / 100 # začetni korak
     T = [t]
     Y = [copy(y)]
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.12)  9 SEP 2025 14:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.12)  9 SEP 2025 15:03
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -575,8 +575,8 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 
-Overfull \hbox (16.6642pt too wide) in paragraph at lines 69--70
-\OT1/lmr/m/n/12 (-20) Ena^^Tcbo drugega reda smo pretvo-rili v sis-tem prvega reda in za-pisali funkcijo \OT1/lmtt/m/n/12 sistem[]nihalo(t,y)\OT1/lmr/m/n/12 (-20) ,
+Overfull \hbox (2.76215pt too wide) in paragraph at lines 69--70
+\OT1/lmr/m/n/12 (-20) Ena^^Tcbo drugega reda smo pretvo-rili v sis-tem prvega reda in za-pisali funkcijo 'sis-tem[]nihalo(t,y)',
  []
 
 
@@ -589,20 +589,32 @@ Overfull \hbox (6.82875pt too wide) in paragraph at lines 86--87
 [1
 
 {c:/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}{c:/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{c:/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{c:/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{c:/texlive/2024/texmf-dist/fonts/enc/dvips/lm/lm-rmtt.enc}]
+Overfull \hbox (12.22972pt too wide) in paragraph at lines 97--98
+[]\OT1/lmr/m/n/12 (-20) Rezultati ka^^Tzejo, da ima har-moni^^Tcno ni-halo vedno enak ni-ha-jni ^^Tcas, medtem ko pri matemati^^Tcnem
+ []
+
 \pydata@fh@_2625186A033BEFBA098DE70EC1FDEDA8.data.minted=\write5
 \openout5 = `_2625186A033BEFBA098DE70EC1FDEDA8.data.minted'.
 
-runsystem(latexminted config  --timestamp 20250909141900 2625186A033BEFBA098DE70EC1FDEDA8)...executed safely (allowed).
+runsystem(latexminted config  --timestamp 20250909150351 2625186A033BEFBA098DE70EC1FDEDA8)...executed safely (allowed).
 
- (./_2625186A033BEFBA098DE70EC1FDEDA8.config.minted)
-runsystem(latexminted cleanconfig  --timestamp 20250909141900 2625186A033BEFBA098DE70EC1FDEDA8)...executed safely (allowed).
+(./_2625186A033BEFBA098DE70EC1FDEDA8.config.minted)
+runsystem(latexminted cleanconfig  --timestamp 20250909150351 2625186A033BEFBA098DE70EC1FDEDA8)...executed safely (allowed).
 
- (./_minted/default.style.minted) (./_minted/E4DBF508D6E091B18094E80B75FD8E9F.highlight.minted)
+ (./_minted/default.style.minted) (./_minted/6AE6AF928490CD8E03B9864E7A1F2569.highlight.minted)
+<jl_XjkHJm/porocilo_0_1.pdf, id=20, 602.25pt x 803.0pt>
+File: jl_XjkHJm/porocilo_0_1.pdf Graphic file (type pdf)
+<use jl_XjkHJm/porocilo_0_1.pdf>
+Package pdftex.def Info: jl_XjkHJm/porocilo_0_1.pdf  used on input line 105.
+(pdftex.def)             Requested size: 469.47046pt x 625.98216pt.
+
 
 [2]
+
+[3 <./jl_XjkHJm/porocilo_0_1.pdf>]
 \openout5 = `_2625186A033BEFBA098DE70EC1FDEDA8.data.minted'.
 
-runsystem(latexminted clean  --timestamp 20250909141900 2625186A033BEFBA098DE70EC1FDEDA8)...executed safely (allowed).
+runsystem(latexminted clean  --timestamp 20250909150351 2625186A033BEFBA098DE70EC1FDEDA8)...executed safely (allowed).
 
  (./porocilo.aux)
  ***********
@@ -617,21 +629,21 @@ Package rerunfilecheck Warning: File `porocilo.out' has changed.
 
 Package rerunfilecheck Info: Checksums for `porocilo.out':
 (rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  4159F387C4328AAC0CFA69C968E2EBAD;377.
+(rerunfilecheck)             After:  87F4258FFD239149F8F428BAE14563FC;479.
  ) 
 Here is how much of TeX's memory you used:
- 17186 strings out of 473362
- 320829 string characters out of 5725050
+ 17207 strings out of 473362
+ 321311 string characters out of 5725050
  870429 words of memory out of 5000000
- 40004 multiletter control sequences out of 15000+600000
- 598890 words of font info for 93 fonts, out of 8000000 for 9000
+ 40021 multiletter control sequences out of 15000+600000
+ 598977 words of font info for 94 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,8n,81p,1074b,485s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi12.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmsy8.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmtt12.pfb>
-Output written on porocilo.pdf (2 pages, 121908 bytes).
+ 75i,8n,81p,1074b,521s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmbx12.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmmi12.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmsy8.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmtt10.pfb><c:/texlive/2024/texmf-dist/fonts/type1/public/lm/lmtt12.pfb>
+Output written on porocilo.pdf (3 pages, 170622 bytes).
 PDF statistics:
- 65 PDF objects out of 1000 (max. 8388607)
- 44 compressed objects within 1 object stream
- 6 named destinations out of 1000 (max. 500000)
- 23553 words of extra memory for PDF output out of 24883 (max. 10000000)
+ 79 PDF objects out of 1000 (max. 8388607)
+ 54 compressed objects within 1 object stream
+ 8 named destinations out of 1000 (max. 500000)
+ 23558 words of extra memory for PDF output out of 24883 (max. 10000000)
 
