@@ -1,0 +1,128 @@
+        - using Test
+        - include("../src/Naloga3.jl")
+        - using .Naloga3
+        - 
+        - @testset "TestDopri5" begin
+        - 
+        -     @testset "Basic ODE" begin
+      224         f(t, y) = -2 .* y
+        -         tspan = (0.0, 5.0)
+        -         y0 = [1.0]
+        -         epsilon = 1e-6
+        -         sigma = 0.9
+        - 
+        -         T, Y = dopri5(f, tspan, y0, epsilon, sigma)
+        - 
+        -         # Analitična rešitev
+       33         y_expected(t) = exp(-2 * t)
+        - 
+        -         for (ti, yi) in zip(T, eachrow(Y))
+        -             @test isapprox(yi[1], y_expected(ti); atol=1e-5)
+        -         end
+        -     end
+        - 
+        -     @testset "Error Control" begin
+      252         f(t, y) = [-t * y[1]^2]
+        -         tspan = (0.0, 2.0)
+        -         y0 = [1.0]
+        -         epsilon = 1e-8
+        -         sigma = 0.9
+        - 
+        -         T, Y = dopri5(f, tspan, y0, epsilon, sigma)
+        - 
+        -         # Analitična rešitev: y(t) = 1 / (1 + 0.5 t^2)
+       35         y_expected(t) = 1 / (1 + 0.5 * t^2)
+        - 
+        -         for (ti, yi) in zip(T, eachrow(Y))
+        -             @test isapprox(yi[1], y_expected(ti); atol=1e-6)
+        -         end
+        -     end
+        - 
+        - end
+        - 
+        - @testset "Test sistem_nihalo" begin
+        - 
+        -     @testset "Stacionarno ravnovesje" begin
+        -         # če je kot = 0 in kotna_hitrost = 0, potem so odvodi oba 0
+        -         odvod = sistem_nihalo(0.0, [0.0, 0.0])
+        -         @test isapprox(odvod[1], 0.0; atol=1e-12)
+        -         @test isapprox(odvod[2], 0.0; atol=1e-12)
+        -     end
+        - 
+        -     @testset "Pozitivna kotna_hitrost" begin
+        -         # če je kot = 0, potem mora biti odvod kota enak kotni hitrosti
+        -         odvod = sistem_nihalo(0.0, [0.0, 2.0])
+        -         @test isapprox(odvod[1], 2.0; atol=1e-12)
+        -         @test isapprox(odvod[2], 0.0; atol=1e-12)
+        -     end
+        - 
+        -     @testset "Negativen kot" begin
+        -         # če je kot = -pi/2, potem je odvod kotne hitrosti = -(g/l)*sin(kot)
+        -         kot = -pi/2
+        -         kotna_hitrost = 0.0
+        -         odvod = sistem_nihalo(0.0, [kot, kotna_hitrost])
+        -         @test isapprox(odvod[1], 0.0; atol=1e-12)
+        -         @test isapprox(odvod[2], -(9.81/1.0)*sin(kot); atol=1e-12)
+        -     end
+        - 
+        - end
+        - 
+        - @testset "Test energija_nihalo" begin
+        - 
+        -     @testset "Ničelno stanje" begin
+        -         # kot = 0, kotna_hitrost = 0 → energija = 0
+        -         E = energija_nihalo([0.0, 0.0])
+        -         @test isapprox(E, 0.0; atol=1e-12)
+        -     end
+        - 
+        -     @testset "Samo potencialna energija" begin
+        -         # kot = pi/2, kotna_hitrost = 0 → E = (g/l)(1 - cos(pi/2)) = g/l
+        -         E = energija_nihalo([pi/2, 0.0])
+        -         @test isapprox(E, 9.81/1.0; atol=1e-12)
+        -     end
+        - 
+        -     @testset "Samo kinetična energija" begin
+        -         # kot = 0, kotna_hitrost = 2 → E = 0.5 * 2^2 = 2
+        -         E = energija_nihalo([0.0, 2.0])
+        -         @test isapprox(E, 2.0; atol=1e-12)
+        -     end
+        - 
+        -     @testset "Kombinirana energija" begin
+        -         # kot = pi/3, kotna_hitrost = 1
+        -         # E = 0.5*1^2 + (g/l)*(1 - cos(pi/3))
+        -         E = energija_nihalo([pi/3, 1.0])
+        -         pričakovana = 0.5*1^2 + (9.81/1.0)*(1 - cos(pi/3))
+        -         @test isapprox(E, pričakovana; atol=1e-12)
+        -     end
+        - 
+        - end
+        - 
+        - @testset "Test resi_nihalo" begin
+        - 
+        -     @testset "Oblika rezultata" begin
+        -         cas, resitev = resi_nihalo(0.1, 0.0, 5.0)
+        -         @test length(cas) > 1                     # mora vrniti več časovnih točk
+        -         @test size(resitev, 2) == 2               # dva stolpca: [kot, kotna_hitrost]
+        -         @test length(cas) == size(resitev, 1)     # usklajena dolžina
+        -     end
+        - 
+        -     @testset "Majhen kot ~ linearno nihalo" begin
+        -         cas, resitev = resi_nihalo(0.1, 0.0, 2π)
+      110         kot_linearno(t) = 0.1 * cos(sqrt(9.81/1.0) * t)
+        -         for (ti, yi) in zip(cas, eachrow(resitev))
+        -             @test isapprox(yi[1], kot_linearno(ti); atol=1e-2)
+        -         end
+        -     end
+        - 
+        -     @testset "Energija se ohranja" begin
+        -         cas, resitev = resi_nihalo(0.5, 0.0, 10.0)
+        -         energije = [energija_nihalo(y) for y in eachrow(resitev)]
+        -         E0 = energije[1]
+        -         for E in energije
+        -             @test isapprox(E, E0; rtol=1e-3)   # dovolimo majhen relativni odklon
+        -         end
+        -     end
+        - 
+        - end
+        - 
+        - 

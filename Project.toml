@@ -1,0 +1,4 @@
+[deps]
+Coverage = "a2441757-f6aa-5fb2-8edb-039e3f45d037"
+Naloga3 = "cc2d6ffb-4faa-4d8c-874c-4f3ce0e498cf"
+SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
