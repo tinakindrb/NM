@@ -1,0 +1,108 @@
+        - module Naloga3
+        - 
+        - using LinearAlgebra
+        - 
+        - export dopri5, sistem_nihalo, energija_nihalo
+        - 
+        - 
+        - """
+        - dopri5(f, tspan, y0, epsilon, sigma)
+        - 
+        - Reši začetni problem za navadne diferencialne enačbe z metodo Dormand-Prince 
+        - 5. reda (DOPRI5) z adaptivnim korakom in oceno lokalne napake.
+        - 
+        - Vhod:
+        - - f : funkcija desne strani sistema (dy/dt = f(t, y)), kjer je y vektor
+        - - tspan : interval reševanja [t0, tf]
+        - - y0 : začetni pogoj (vektor)
+        - - epsilon : toleranca za lokalno napako
+        - - sigma : varnostni faktor (0 < sigma < 1) pri prilagoditvi koraka
+        - 
+        - Izhod:
+        - - T : vektor časovnih točk, kjer je rešitev izračunana
+        - - Y : matrika rešitev, kjer vrstica ustreza času v T
+        - """
+        2 function dopri5(f, tspan, y0, epsilon, sigma)
+        2     t0, tf = tspan
+        2     t = t0
+        2     y = copy(y0)
+        2     h = (tf - t0) / 100   # začetni korak
+        2     T = [t]
+        2     Y = [copy(y)]
+        - 
+       70     while t < tf
+       68         k1 = h * f(t, y)
+       68         k2 = h * f(t + h/5, y + k1/5)
+       68         k3 = h * f(t + 3h/10, y + 3k1/40 + 9k2/40)
+       68         k4 = h * f(t + 4h/5, y + 44k1/45 - 56k2/15 + 32k3/9)
+       68         k5 = h * f(t + 8h/9, y + 19372k1/6561 - 25360k2/2187 + 64448k3/6561 - 212k4/729)
+       68         k6 = h * f(t + h, y + 9017k1/3168 - 355k2/33 + 46732k3/5247 + 49k4/176 - 5103k5/18656)
+       68         k7 = h * f(t + h, y + 35k1/384 + 500k3/1113 + 125k4/192 - 2187k5/6784 + 11k6/84)
+        - 
+        -         # Lokalna napaka (4. red)
+       68         le = 71k1/57600 - 71k3/16695 + 71k4/1920 - 17253k5/339200 + 22k6/525 - k7/40
+       68         nle = norm(le)
+        - 
+       68         if nle < epsilon * h
+        -             # Sprejmemo korak (5. red)
+       66             y += 35k1/384 + 500k3/1113 + 125k4/192 - 2187k5/6784 + 11k6/84
+       66             t += h
+       66             push!(T, t)
+       66             push!(Y, copy(y))
+        - 
+        -             # Prilagoditev koraka
+      132             h = h * sigma * (epsilon * h / max(nle, 1e-16))^(1/5)
+       66             if t + h > tf
+        4                 h = tf - t
+        -             end
+        -         else
+        2             h /= 2
+        -         end
+       68     end
+        - 
+        2     return T, hcat(Y...)'
+        - end
+        - 
+        - """
+        - sistem_nihalo(t, y)
+        - 
+        - Definira sistem diferencialnih enačb za matematično nihalo:
+        - - kot'(t) = kotna_hitrost(t)
+        - - kotna_hitrost'(t) = -(g/l) * sin(kot(t))
+        - 
+        - Vhod:
+        - - t : čas
+        - - y : vektor [kot, kotna_hitrost]
+        - 
+        - Izhod:
+        - - odvod vektorja [kot, kotna_hitrost]
+        - """
+        3 function sistem_nihalo(t, y)
+        3     kot, kotna_hitrost = y
+        3     g, l = 9.81, 1.0
+        3     return [kotna_hitrost, -(g/l) * sin(kot)]
+        - end
+        - 
+        - """
+        - energija_nihalo(y)
+        - 
+        - Izračuna mehansko energijo matematičnega nihala za dano stanje.
+        - 
+        - Energija je sestavljena iz kinetične in potencialne energije:
+        - E = 0.5 * kotna_hitrost^2 + (g/l) * (1 - cos(kot))
+        - 
+        - Vhod:
+        - - y : vektor [kot, kotna_hitrost]
+        - 
+        - Izhod:
+        - - energija : skalarna vrednost energije
+        - """
+        4 function energija_nihalo(y)
+        4     kot, kotna_hitrost = y
+        4     g, l = 9.81, 1.0
+        4     return 0.5 * kotna_hitrost^2 + (g/l) * (1 - cos(kot))
+        - end
+        - 
+        - 
+        - 
+        - end # module Naloga3

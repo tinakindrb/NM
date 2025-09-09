@@ -1,0 +1,93 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[a4paper,text={16.5cm,25.2cm},centering]{geometry}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{microtype}
+\usepackage{hyperref}
+\usepackage{minted}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1.2ex}
+
+\hypersetup
+       {   pdfauthor = {  },
+           pdftitle={  },
+           colorlinks=TRUE,
+           linkcolor=black,
+           citecolor=blue,
+           urlcolor=blue
+       }
+
+
+
+
+
+
+\begin{document}
+
+
+
+\section{Matematično nihalo}
+Tina Brdnik
+
+\subsection{Opis naloge}
+Naloga obravnava matematično nihalo, katerega odmik $kot(t)$ je podan z diferencialno enačbo:
+
+\[
+\ddot{\theta}(t) + \frac{g}{l}\sin(\theta(t)) = 0, \quad \theta(0) = \theta_0, \quad \dot{\theta}(0) = \omega_0.
+\]
+Enačbo drugega reda prevedemo na sistem prvega reda:
+
+\[
+\begin{cases}
+\theta'(t) = \omega(t), \\
+\omega'(t) = -\dfrac{g}{l}\sin(\theta(t)).
+\end{cases}
+\]
+Za različne začetne pogoje primerjamo rešitev z nihanjem harmoničnega nihala, ki je podano z linearizirano enačbo:
+
+\[
+\ddot{\theta}(t) + \frac{g}{l}\theta(t) = 0.
+\]
+Pri harmoničnem nihalu je nihajni čas neodvisen od začetnega odmika, medtem ko pri matematičnem nihalu narašča z večjo začetno energijo.
+
+\subsection{Opis rešitve}
+Implementacija je razdeljena na več funkcij, združenih v modulu \texttt{Naloga3}:
+
+\begin{itemize}
+\item[1. ] \textbf{Metoda DOPRI5}  
+
+\end{itemize}
+Funkcija \texttt{dopri5} je lastna implementacija metode Dormand\ensuremath{\endash}Prince 5. reda (DOPRI5) z adaptivnim korakom. Metoda uporablja oceno napake med približkom 5. in 4. reda ter na tej osnovi povečuje ali zmanjšuje dolžino koraka. S tem zagotavlja visoko natančnost pri optimalnem številu korakov.
+
+\begin{itemize}
+\item[2. ] \textbf{Sistem matematičnega nihala}  
+
+\end{itemize}
+Enačbo drugega reda smo pretvorili v sistem prvega reda in zapisali funkcijo \texttt{sistem\_nihalo(t,y)}, ki vrača odvode $[\theta', \omega']$ za dano stanje.
+
+\begin{itemize}
+\item[3. ] \textbf{Energija sistema}  
+
+\end{itemize}
+Funkcija \texttt{energija\_nihalo(y)} izračuna mehansko energijo nihala kot:
+
+\[
+E = \tfrac{1}{2}\,\omega^2 + \frac{g}{l}\,(1 - \cos(\theta)).
+\]
+Energija se v točni rešitvi ohranja, zato je uporabna za preverjanje pravilnosti numerične metode.
+
+\begin{itemize}
+\item[4. ] \textbf{Reševanje nihala}  
+
+\end{itemize}
+Funkcija \texttt{resi\_nihalo(zacetni\_kot, zacetna\_kotna\_hitrost, cas\_konec)} uporabi metodo \texttt{dopri5} in funkcijo \texttt{sistem\_nihalo} za izračun rešitve na podanem časovnem intervalu. Rezultat sta vektor časov in matrika, ki vsebuje vrednosti kota in kotne hitrosti v teh časih.
+
+
+\begin{minted}[texcomments = true, mathescape, fontsize=\small, xleftmargin=0.5em]{julia}
+\end{minted}
+
+
+\end{document}
