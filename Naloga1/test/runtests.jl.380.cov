@@ -1,0 +1,246 @@
+        - using Test, LinearAlgebra
+        - include("../src/Naloga1.jl")
+        - using .Naloga1
+        - 
+        - """
+        - TESTI podatkovni tip ZgornjiHessenberg
+        - """
+        - 
+        - @testset "ZgornjiHessenberg konstruktor" begin
+        -     # Primer 1: konkretna Hessenbergova matrika
+        -     H1 = [2.5   -1.2   3.0;
+        -           -4.7   5.3  -6.1;
+        -            0.0   7.4   8.8]
+        -     zh1 = ZgornjiHessenberg(H1)
+        -     @test zh1.H ≈ H1 atol=1e-8
+        - 
+        -     # Primer 2: identiteta
+        -     I4 = Matrix{Float64}(I, 4, 4)
+        -     zh2 = ZgornjiHessenberg(I4)
+        -     @test zh2.H ≈ I4 atol=1e-12
+        - 
+        -     # Primer 3: naključna Hessenbergova (0 pod drugo poddiagonalo)
+        -     H3 = [1.0    -2.0   3.5   0.0;
+        -           5.1     0.7  -1.4   2.2;
+        -           0.0    -3.3   4.0  -0.8;
+        -           0.0     0.0   2.1   1.5]
+        -     zh3 = ZgornjiHessenberg(H3)
+        -     @test zh3.H ≈ H3 atol=1e-8
+        - 
+        -     # Primer 4: neveljavna matrika (mora sprožiti error)
+        -     Hbad = [1.0  2.0  3.0;
+        -             4.0  5.0  6.0;
+        -             9.0  7.0  8.0]   # element (3,1) ≠ 0
+        -     @test_throws ErrorException ZgornjiHessenberg(Hbad)
+        - 
+        -     # Primer 5: ne-kvadratna matrika (mora sprožiti error)
+        -     Hrect = [1.0 2.0 3.0;
+        -              4.0 5.0 6.0]   # 2x3 matrika
+        -     @test_throws ErrorException ZgornjiHessenberg(Hrect)
+        - end
+        - 
+        - """
+        - TESTI funkcija hessenberg
+        - """
+        - 
+        - @testset "hessenberg redukcija" begin
+        -     # Primer 1: konkretna matrika
+        -     A1 = [-149.0  -50.0  -154.0;
+        -            537.0   180.0   546.0;
+        -            -27.0    -9.0   -25.0]
+        - 
+        -     H1, Q1 = Naloga1.hessenberg(A1)
+        - 
+        -     # preveri rekonstrukcijo
+        -     @test A1 ≈ Q1 * H1.H * Q1' atol=1e-10
+        - 
+        -     # Primer 2: identiteta
+        -     A2 = Matrix{Float64}(I, 3, 3)
+        -     H2, Q2 = Naloga1.hessenberg(A2)
+        - 
+        -     @test A2 ≈ Q2 * H2.H * Q2' atol=1e-10
+        - 
+        -     # Primer 3: "naključna" matrika
+        -     A3 = [1.0  2.0  3.0;
+        -           4.0  5.0  6.0;
+        -           7.0  8.0  9.0]
+        - 
+        -     H3, Q3 = Naloga1.hessenberg(A3)
+        - 
+        -     @test A3 ≈ Q3 * H3.H * Q3' atol=1e-10
+        - end
+        - 
+        - """
+        - TESTI za podatkovni tip SpTridiag in metodo Base.\
+        - """
+        - 
+        - @testset "SpTridiag konstruktor in reševanje" begin
+        -     # Primer: 3x3 matrika
+        -     d  = [1.0, 1.0, 1.0]
+        -     sd = [2.0, 3.0]
+        -     L = SpTridiag(d, sd)
+        - 
+        -     # pričakovana polna oblika
+        -     Lfull = [1.0 0.0 0.0;
+        -              2.0 1.0 0.0;
+        -              0.0 3.0 1.0]
+        - 
+        -     @test Matrix(L) ≈ Lfull atol=1e-12
+        - 
+        -     # Preveri reševanje Lx = b
+        -     b = [1.0, 2.0, 3.0]
+        -     x = L \ b
+        -     @test Lfull * x ≈ b atol=1e-12
+        - 
+        - 
+        -     # Primer: 4x4 matrika
+        -     d2  = ones(4)
+        -     sd2 = [1.0, -2.0, 4.0]
+        -     L2 = SpTridiag(d2, sd2)
+        - 
+        -     L2full = [1.0  0.0  0.0  0.0;
+        -               1.0  1.0  0.0  0.0;
+        -               0.0 -2.0  1.0  0.0;
+        -               0.0  0.0  4.0  1.0]
+        - 
+        -     @test Matrix(L2) ≈ L2full atol=1e-12
+        - 
+        -     b2 = [2.0, 1.0, 0.0, -3.0]
+        -     x2 = L2 \ b2
+        -     @test L2full * x2 ≈ b2 atol=1e-12
+        - 
+        -     #Primer: napačne dimenzije za sistem
+        -     d  = [1.0, 1.0, 1.0]
+        -     sd = [2.0, 3.0]
+        -     L = SpTridiag(d, sd)
+        - 
+        -     b_wrong = [1.0, 2.0] #napačne dimenzije
+        - 
+        -     @test_throws ArgumentError L \ b_wrong
+        - end
+        - 
+        - """
+        - TESTI LU razcep za Zgornji Hessenberg
+        - """
+        - 
+        - @testset "LU razcep ZgornjiHessenberg" begin
+        -     # Primer 1: osnovna 3x3 matrika
+        -     A1 = [1.0  2.0  3.0;
+        -           4.0  5.0  6.0;
+        -           0.0  7.0  8.0]
+        -     ZH1 = Naloga1.ZgornjiHessenberg(A1)
+        -     L1, U1 = Naloga1.lu(ZH1)
+        -     @test Matrix(L1) * U1 ≈ A1 atol=1e-12
+        - 
+        -     # Primer 2: negativni elementi
+        -     A2 = [-2.0  -1.0   3.0;
+        -            5.0   0.0  -4.0;
+        -            0.0  -7.0   6.0]
+        -     ZH2 = Naloga1.ZgornjiHessenberg(A2)
+        -     L2, U2 = Naloga1.lu(ZH2)
+        -     @test Matrix(L2) * U2 ≈ A2 atol=1e-12
+        - 
+        -     # Primer 3: večja 4x4 matrika
+        -     A3 = [ 2.0   -1.0   3.0   4.0;
+        -            5.0    6.0  -2.0   1.0;
+        -            0.0   -3.0   7.0  -5.0;
+        -            0.0    0.0   4.0   8.0]
+        -     ZH3 = Naloga1.ZgornjiHessenberg(A3)
+        -     L3, U3 = Naloga1.lu(ZH3)
+        -     @test Matrix(L3) * U3 ≈ A3 atol=1e-12
+        - 
+        -     # Primer 4: večja 5x5 matrika
+        -     A4 = [ 3.0   2.0   -1.0   4.0    5.0;
+        -            1.0  -6.0    2.0  -3.0    0.0;
+        -            0.0   4.0    7.0   8.0   -2.0;
+        -            0.0   0.0   -5.0   6.0    9.0;
+        -            0.0   0.0    0.0  10.0   -4.0]
+        -     ZH4 = Naloga1.ZgornjiHessenberg(A4)
+        -     L4, U4 = Naloga1.lu(ZH4)
+        -     @test Matrix(L4) * U4 ≈ A4 atol=1e-12
+        - end
+        - 
+        - """
+        - TESTI inv_lastni
+        - """
+        - 
+        1 @testset "inv_lastni metoda" begin
+        -     # Primer 1: 3x3 matrika
+        2     A1 = [4.0 1.0 2.0;
+        -           1.0 3.0 1.0;
+        -           2.0 1.0 3.0]
+        - 
+        3     eivals1 = [1.4116, 2.4064, 6.1819]
+        7     sigmaValues1 = [0.0, 1.0, 2.0, 5.0, 10.0, -10.0, 3.0]
+        - 
+        1     for sigma in sigmaValues1
+        7         λ, x = inv_lastni(A1, sigma)
+       28         idx = argmin(abs.(eivals1 .- λ))
+        7         expectedλ = eivals1[idx]
+        - 
+        7         @test λ ≈ expectedλ atol=1e-4
+        - 
+        7         x /= norm(x)
+        7         @test A1 * x ≈ λ * x atol=1e-4
+        7     end
+        - 
+        - 
+        -     # Primer 2: 4x4 matrika
+        1     A2 = [5.0 4.0 2.0 1.0;
+        -           4.0 5.0 1.0 2.0;
+        -           2.0 1.0 4.0 3.0;
+        -           1.0 2.0 3.0 6.0]
+        - 
+        4     eivals2 = [0.3381, 2.4501, 5.6259, 11.5858]
+        5     sigmaValues2 = [0.0, 2.0, 4.0, 6.0, 10.0]
+        - 
+        1     for sigma in sigmaValues2
+        5         λ, x = inv_lastni(A2, sigma)
+       25         idx = argmin(abs.(eivals2 .- λ))
+        5         expectedλ = eivals2[idx]
+        - 
+        5         @test λ ≈ expectedλ atol=1e-4
+        - 
+        5         x /= norm(x)
+        5         @test A2 * x ≈ λ * x atol=1e-4
+        5     end
+        - end
+        - 
+        - """
+        - TESTI left and right reflection
+        - """
+        - 
+        - @testset "Householder reflection tests" begin
+        -     v = [1.0, 0.0]
+        -     A = [1.0 2.0; 3.0 4.0]
+        -     
+        -     P = I - 2 * (v * v')
+        -     
+        -     # test za levo množenje
+        -     A1 = copy(A)
+        -     Naloga1.left_reflection!(v, A1)
+        -     @test A1 ≈ P * A
+        - 
+        -     # test za desno množenje
+        -     A2 = copy(A)
+        -     Naloga1.right_reflection!(v, A2)
+        -     @test A2 ≈ A * P
+        - 
+        -     v = normalize([1.0, 2.0, 3.0])
+        -     A = rand(3,3)
+        -     P = I - 2 * (v * v')
+        - 
+        -     A1 = copy(A)
+        -     Naloga1.left_reflection!(v, A1)
+        -     @test A1 ≈ P * A
+        - 
+        -     A2 = copy(A)
+        -     Naloga1.right_reflection!(v, A2)
+        -     @test A2 ≈ A * P
+        - end
+        - 
+        - 
+        - 
+        - 
+        - 
+        - 
