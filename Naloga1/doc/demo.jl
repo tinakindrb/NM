@@ -64,7 +64,7 @@ function nariši_polinom_s_konvergenco(koeficienti::Vector{Float64};
               [0, 0], color=color, linewidth=3, label=false)
     end
 
-    title!(plt, "Graf polinoma z označenimi potmi konvergence", titlefontsize=12)
+    title!(plt, "Polinom z ničlami in območji konvergence inverzne iteracije", titlefontsize=12)
     xlabel!(plt, "x")
     ylabel!(plt, "p(x)")
 

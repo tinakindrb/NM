@@ -1,8 +1,8 @@
         - module Naloga1
-        - 
+        - import LinearAlgebra: lu
         - using LinearAlgebra
         - 
-        - export ZgornjiHessenberg, hessenberg, SpTridiag, lu, inv_lastni
+        - export ZgornjiHessenberg, hessenberg, SpTridiag, lu, inv_lastni, right_reflection!, left_reflection!
         - 
         - """
         - ZgornjiHessenberg(H)
@@ -31,6 +31,42 @@
         -     end
         - end
         - 
+        - """
+        - left_reflection!(v, A)
+        - 
+        - Izvede levo množenje matrike A z matriko oblike
+        - P = I - 2vvᵀ in rezultat shrani nazaj v A.
+        - 
+        - # Vhod:
+        - - v : vektor
+        - - A : matrika
+        - 
+        - # Izhod:
+        - - A, posodobljena matrika (A ← (I - 2vvᵀ) * A)
+        - """
+       42 function left_reflection!(v::Vector{Float64}, A::AbstractMatrix)
+       84     A .-= 2 .* (v * (v' * A))
+       42     return A
+        - end
+        - 
+        - """
+        - right_reflection!(v, A)
+        - 
+        - Izvede desno množenje matrike A z matriko oblike
+        - P = I - 2vvᵀ in rezultat shrani nazaj v A.
+        - 
+        - # Vhod:
+        - - v : vektor
+        - - A : matrika
+        - 
+        - # Izhod:
+        - - A, posodobljena matrika (A ← A * (I - 2vvᵀ))
+        - """
+       22 function right_reflection!(v::Vector{Float64}, A::AbstractMatrix)
+       44     A .-= 2 .* ((A * v) * v')
+       22     return A
+        - end
+        - 
         - Base.show(io::IO, Z::ZgornjiHessenberg) = print(io, "ZgornjiHessenberg:\n", Z.H)
         - 
         - """
@@ -49,7 +85,6 @@
         - - H : ZgornjiHessenberg (zgornja Hessenbergova matrika)
         - - Q : ortogonalna matrika
         - """
-        - 
        15 function hessenberg(A::AbstractMatrix)
        15     n, m = size(A)
         - 
@@ -71,15 +106,11 @@
         -         end
         - 
         -         # refleksija
-       20         P = Matrix{Float64}(I, length(v), length(v)) - 2 * (v * v')
+       20         H[k+1:n, k:n] = left_reflection!(v, H[k+1:n, k:n])
+       20         H[1:n, k+1:n] = right_reflection!(v, H[1:n, k+1:n])
+       20         Q[k+1:n, :]   = left_reflection!(v, Q[k+1:n, :])
         - 
-        -         # posodobimo H in Q (uporabimo P na pravem podbloku)
-       20         H[k+1:n, k:n] = P * H[k+1:n, k:n]
-       20         H[1:n, k+1:n] = H[1:n, k+1:n] * P
-       20         Q[k+1:n, :]   = P * Q[k+1:n, :]
        25     end
-        - 
-        -     #print(H)
         - 
        15     return ZgornjiHessenberg(H), Q'
         - end
@@ -108,7 +139,6 @@
         - - Vsi ostali elementi matrike so enaki 0.
         - 
         - """
-        - 
         6 function Matrix(L::SpTridiag)
         6     n = length(L.d)
        84     M = zeros(Float64, n, n)
@@ -121,6 +151,7 @@
         6     return M
         - end
         - 
+        - import Base: \
         - """
         - \\(L, b)
         - 
@@ -130,21 +161,18 @@
         - Izhod:
         - - vektor x dolžine n
         - """
-        - 
-        - import Base: \
-        - 
-     4278 function \(L::SpTridiag, b::Vector{Float64})
-     4278     n = length(L.d)
-     4278     if length(b) != n
+     4258 function \(L::SpTridiag, b::Vector{Float64})
+     4258     n = length(L.d)
+     4258     if length(b) != n
         1         throw(ArgumentError("Dimenzije se ne ujemajo"))
         -     end
         - 
-     8554     x = similar(b)
-     4277     x[1] = b[1] / L.d[1]
-     4277     for i = 2:n
-    10594         x[i] = (b[i] - L.sd[i-1] * x[i-1]) / L.d[i]
-    16911     end
-     4277     return x
+     8514     x = similar(b)
+     4257     x[1] = b[1] / L.d[1]
+     4257     for i = 2:n
+    10550         x[i] = (b[i] - L.sd[i-1] * x[i-1]) / L.d[i]
+    16843     end
+     4257     return x
         - end
         - 
         - """
@@ -198,39 +226,37 @@
         -     #Hessenbergov razcep
        12     H, Q = hessenberg(A)
         - 
-        -     # matrika (H - lI)
+        -     #matrika (H - lI)
        12     Hshift = H.H - l * I
        12     ZH = ZgornjiHessenberg(Hshift)
        12     L, U = lu(ZH)
         - 
-        -     # naključni začetni vektor
+        -     #naključni začetni vektor
        24     x = randn(n)
        12     x /= norm(x)
         - 
        12     for iter = 1:maxiter
-        -         # rešujemo L(U x_{new}) = x
-     4275         y = L \ x
-     4275         xnew = U \ y
+        -         #rešujemo L(U xnew) = x
+     4255         y = L \ x
+     4255         xnew = U \ y
         - 
-        -         # normiranje
-     4275         xnew /= norm(xnew)
+        -         #normiranje
+     4255         xnew /= norm(xnew)
         - 
-        -         # preveri konvergenco
-     4275         if norm(xnew - x) < tol
+        -         #preveri konvergenco
+     4255         if norm(xnew - x) < tol
         8             x = xnew
         8             break
         -         end
         - 
-     4267         x = xnew
-     4267     end
+     4247         x = xnew
+     4247     end
         - 
-        -     # lastna vrednost z Rayleighovim kvocientom
+        -     #lastna vrednost
        12     lambda = (x' * H.H * x) / (x' * x)
         - 
-        -     # vrnemo lastni vektor v originalnem prostoru
+        -     #vrnemo lastni vektor v originalnem prostoru
        12     return lambda, Q * x
         - end
-        - 
-        - 
         - 
         - end #modul Naloga1

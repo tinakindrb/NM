@@ -1,8 +1,8 @@
 module Naloga1
-
+import LinearAlgebra: lu
 using LinearAlgebra
 
-export ZgornjiHessenberg, hessenberg, SpTridiag, lu, inv_lastni
+export ZgornjiHessenberg, hessenberg, SpTridiag, lu, inv_lastni, right_reflection!, left_reflection!
 
 """
 ZgornjiHessenberg(H)
@@ -29,6 +29,42 @@ struct ZgornjiHessenberg
         end
         new(Matrix{Float64}(H))
     end
+end
+
+"""
+left_reflection!(v, A)
+
+Izvede levo množenje matrike A z matriko oblike
+P = I - 2vvᵀ in rezultat shrani nazaj v A.
+
+# Vhod:
+- v : vektor
+- A : matrika
+
+# Izhod:
+- A, posodobljena matrika (A ← (I - 2vvᵀ) * A)
+"""
+function left_reflection!(v::Vector{Float64}, A::AbstractMatrix)
+    A .-= 2 .* (v * (v' * A))
+    return A
+end
+
+"""
+right_reflection!(v, A)
+
+Izvede desno množenje matrike A z matriko oblike
+P = I - 2vvᵀ in rezultat shrani nazaj v A.
+
+# Vhod:
+- v : vektor
+- A : matrika
+
+# Izhod:
+- A, posodobljena matrika (A ← A * (I - 2vvᵀ))
+"""
+function right_reflection!(v::Vector{Float64}, A::AbstractMatrix)
+    A .-= 2 .* ((A * v) * v')
+    return A
 end
 
 Base.show(io::IO, Z::ZgornjiHessenberg) = print(io, "ZgornjiHessenberg:\n", Z.H)
@@ -70,15 +106,11 @@ function hessenberg(A::AbstractMatrix)
         end
 
         # refleksija
-        P = Matrix{Float64}(I, length(v), length(v)) - 2 * (v * v')
+        H[k+1:n, k:n] = left_reflection!(v, H[k+1:n, k:n])
+        H[1:n, k+1:n] = right_reflection!(v, H[1:n, k+1:n])
+        Q[k+1:n, :]   = left_reflection!(v, Q[k+1:n, :])
 
-        # posodobimo H in Q (uporabimo P na pravem podbloku)
-        H[k+1:n, k:n] = P * H[k+1:n, k:n]
-        H[1:n, k+1:n] = H[1:n, k+1:n] * P
-        Q[k+1:n, :]   = P * Q[k+1:n, :]
     end
-
-    #print(H)
 
     return ZgornjiHessenberg(H), Q'
 end

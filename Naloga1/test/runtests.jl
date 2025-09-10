@@ -128,7 +128,7 @@ TESTI LU razcep za Zgornji Hessenberg
     A1 = [1.0  2.0  3.0;
           4.0  5.0  6.0;
           0.0  7.0  8.0]
-    ZH1 = ZgornjiHessenberg(A1)
+    ZH1 = Naloga1.ZgornjiHessenberg(A1)
     L1, U1 = Naloga1.lu(ZH1)
     @test Matrix(L1) * U1 ≈ A1 atol=1e-12
 
@@ -136,7 +136,7 @@ TESTI LU razcep za Zgornji Hessenberg
     A2 = [-2.0  -1.0   3.0;
            5.0   0.0  -4.0;
            0.0  -7.0   6.0]
-    ZH2 = ZgornjiHessenberg(A2)
+    ZH2 = Naloga1.ZgornjiHessenberg(A2)
     L2, U2 = Naloga1.lu(ZH2)
     @test Matrix(L2) * U2 ≈ A2 atol=1e-12
 
@@ -145,7 +145,7 @@ TESTI LU razcep za Zgornji Hessenberg
            5.0    6.0  -2.0   1.0;
            0.0   -3.0   7.0  -5.0;
            0.0    0.0   4.0   8.0]
-    ZH3 = ZgornjiHessenberg(A3)
+    ZH3 = Naloga1.ZgornjiHessenberg(A3)
     L3, U3 = Naloga1.lu(ZH3)
     @test Matrix(L3) * U3 ≈ A3 atol=1e-12
 
@@ -155,7 +155,7 @@ TESTI LU razcep za Zgornji Hessenberg
            0.0   4.0    7.0   8.0   -2.0;
            0.0   0.0   -5.0   6.0    9.0;
            0.0   0.0    0.0  10.0   -4.0]
-    ZH4 = ZgornjiHessenberg(A4)
+    ZH4 = Naloga1.ZgornjiHessenberg(A4)
     L4, U4 = Naloga1.lu(ZH4)
     @test Matrix(L4) * U4 ≈ A4 atol=1e-12
 end
@@ -163,7 +163,6 @@ end
 """
 TESTI inv_lastni
 """
-
 
 @testset "inv_lastni metoda" begin
     # Primer 1: 3x3 matrika
@@ -207,6 +206,38 @@ TESTI inv_lastni
     end
 end
 
+"""
+TESTI left and right reflection
+"""
+
+@testset "Householder reflection tests" begin
+    v = [1.0, 0.0]
+    A = [1.0 2.0; 3.0 4.0]
+    
+    P = I - 2 * (v * v')
+    
+    # test za levo množenje
+    A1 = copy(A)
+    Naloga1.left_reflection!(v, A1)
+    @test A1 ≈ P * A
+
+    # test za desno množenje
+    A2 = copy(A)
+    Naloga1.right_reflection!(v, A2)
+    @test A2 ≈ A * P
+
+    v = normalize([1.0, 2.0, 3.0])
+    A = rand(3,3)
+    P = I - 2 * (v * v')
+
+    A1 = copy(A)
+    Naloga1.left_reflection!(v, A1)
+    @test A1 ≈ P * A
+
+    A2 = copy(A)
+    Naloga1.right_reflection!(v, A2)
+    @test A2 ≈ A * P
+end
 
 
 

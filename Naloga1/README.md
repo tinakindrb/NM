@@ -27,7 +27,7 @@ Poročilo pripravimo z ukazoma:
 ```jl
 using Weave
 
-Weave.weave("Vaja01/doc/01uvod.jl",doctype="minted2pdf", out_path="Vaja01/pdf")
+Weave.weave("Naloga1/doc/porocilo.jl",doctype="minted2pdf", out_path="Naloga1/pdf")
 ```
 Poročilo se nahaja v Naloga1/pdf/porocilo.pdf
 

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.11.12)  31 AUG 2025 00:02
+This is XeTeX, Version 3.141592653-2.6-0.999996 (TeX Live 2024) (preloaded format=xelatex 2024.11.12)  10 SEP 2025 14:54
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -630,11 +630,11 @@ File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 \pydata@fh@_2625186A033BEFBA098DE70EC1FDEDA8.data.minted=\write5
 \openout5 = `_2625186A033BEFBA098DE70EC1FDEDA8.data.minted'.
 
-runsystem(latexminted config  --timestamp 20250831000227 2625186A033BEFBA098DE7
+runsystem(latexminted config  --timestamp 20250910145451 2625186A033BEFBA098DE7
 0EC1FDEDA8)...executed.
 
  (./_2625186A033BEFBA098DE70EC1FDEDA8.config.minted)
-runsystem(latexminted cleanconfig  --timestamp 20250831000227 2625186A033BEFBA0
+runsystem(latexminted cleanconfig  --timestamp 20250910145451 2625186A033BEFBA0
 98DE70EC1FDEDA8)...executed.
 
 
@@ -647,8 +647,8 @@ Package microtype Info: Loading generic protrusion settings for font family
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <10.95> not available
 (Font)              Font shape `TU/lmtt/b/n' tried instead on input line 3.
 )
-File: jl_LWxXfN/porocilo_0_1.pdf Graphic file (type pdf)
-<use jl_LWxXfN/porocilo_0_1.pdf>
+File: jl_wnr158/porocilo_0_1.pdf Graphic file (type pdf)
+<use jl_wnr158/porocilo_0_1.pdf>
 
 
 [2] (./porocilo.aux)
